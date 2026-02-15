@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Chanakya Security Academy</title>
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
     <style>
@@ -100,7 +100,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('https://raw.githubusercontent.com/ct-infosec/Chanakya-Security-Academy.in/refs/heads/main/csa%20wht%20trnp%403x.png') no-repeat center center;
+            background: url('https://raw.githubusercontent.com/ct-infosec/Chanakya-Security-Academy.in/refs/heads/main/csa%20logo.png') no-repeat center center;
             background-size: contain;
             opacity: 0.7;
             z-index: 5;
@@ -124,6 +124,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0 20px;
+            text-align: center;
         }
 
         .splash-text {
@@ -134,7 +136,7 @@
             color: var(--primary);
             text-transform: uppercase;
             text-shadow: 0 0 10px var(--primary);
-            white-space: nowrap;
+            white-space: pre-wrap; /* Allow wrapping on small screens */
         }
 
         /* Loading Bar */
@@ -187,16 +189,20 @@
             position: fixed;
             bottom: 30px;
             right: 30px;
-            background: rgba(16, 185, 129, 0.9);
+            left: 30px; /* Safe area for mobile */
+            width: auto;
+            max-width: 400px;
+            margin: 0 auto;
+            background: rgba(16, 185, 129, 0.95);
             color: white;
-            padding: 12px 24px;
+            padding: 16px 20px;
             border-radius: var(--radius-md);
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
-            gap: 10px;
-            transform: translateY(100px);
+            gap: 12px;
+            transform: translateY(150px);
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
             z-index: 2000;
@@ -244,6 +250,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: var(--font-display);
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
         }
 
         body {
@@ -255,7 +262,7 @@
         }
 
         /* Scrollbar Styling */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: var(--bg-body); }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
@@ -378,6 +385,25 @@
             object-fit: cover;
         }
 
+        /* Sidebar Overlay for Mobile */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .sidebar-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
         /* --- 3. MAIN CONTENT AREA --- */
         .main-content {
             margin-left: var(--sidebar-width);
@@ -385,6 +411,7 @@
             padding: 30px 40px;
             width: calc(100% - var(--sidebar-width));
             min-height: 100vh;
+            transition: margin 0.3s;
         }
 
         /* View Section Handling */
@@ -732,6 +759,7 @@
             padding-bottom: 15px;
             cursor: pointer;
             position: relative;
+            white-space: nowrap; /* Prevent line breaks on mobile */
         }
         
         .tab-btn.active {
@@ -865,20 +893,110 @@
             margin: 20px 0;
         }
 
-        /* Mobile Responsive */
+        /* --- MOBILE OPTIMIZATIONS --- */
         @media (max-width: 1024px) {
             .player-layout { grid-template-columns: 1fr; }
             .checkout-layout { grid-template-columns: 1fr; }
-            .course-playlist { max-height: 400px; }
+            .course-playlist { max-height: 400px; margin-bottom: 30px; }
             .profile-layout { grid-template-columns: 1fr; }
         }
 
         @media (max-width: 768px) {
-            .sidebar { transform: translateX(-100%); }
+            :root {
+                --sidebar-width: 0px; 
+            }
+            
+            /* Sidebar hidden off canvas */
+            .sidebar { 
+                transform: translateX(-100%); 
+                width: 280px; 
+                box-shadow: 20px 0 50px rgba(0,0,0,0.5);
+            }
             .sidebar.open { transform: translateX(0); }
-            .main-content { margin-left: 0; width: 100%; padding: 20px; }
+            
+            /* Add content overlay when sidebar open */
+            .main-content { 
+                margin-left: 0; 
+                width: 100%; 
+                padding: 20px 15px; 
+                padding-top: 70px;
+            }
+            
             .hero-title { font-size: 2rem; }
-            .toggle-menu { display: block; position: fixed; top: 20px; right: 20px; z-index: 2000; background: var(--bg-panel); padding: 10px; border-radius: 8px; }
+            .hero-slider { height: auto; min-height: 450px; }
+            .slide { padding: 30px; }
+            
+            /* Mobile Toggle Button */
+            .toggle-menu { 
+                display: flex; 
+                align-items: center;
+                justify-content: center;
+                position: fixed; 
+                top: 15px; 
+                right: 15px; 
+                z-index: 2000; 
+                background: rgba(18, 18, 18, 0.8); 
+                padding: 10px; 
+                border-radius: 8px; 
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.1);
+            }
+
+            /* Responsive Grids */
+            .course-grid {
+                grid-template-columns: 1fr; 
+                gap: 20px;
+            }
+
+            .glass-panel {
+                padding: 20px; 
+            }
+
+            /* Forms Stack */
+            .form-group {
+                margin-bottom: 15px;
+            }
+            .glass-panel div[style*="grid-template-columns"] {
+                grid-template-columns: 1fr !important;
+            }
+            
+            /* Hero Buttons Stack */
+            .slide-content div {
+                display: flex;
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+                width: 100%;
+            }
+            .btn {
+                width: 100%; 
+            }
+            
+            /* Tabs Scroll */
+            .tabs-header {
+                overflow-x: auto; 
+                padding-bottom: 5px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .tab-btn {
+                padding: 10px 15px;
+            }
+            
+            /* List Rows Stack */
+            .list-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .list-row > div {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            /* Splash Screen Text */
+            .splash-text {
+                font-size: 0.9rem;
+            }
         }
         
         .toggle-menu { display: none; border: 1px solid #333; color: white; cursor:pointer;}
@@ -890,7 +1008,7 @@
     <!-- HYPER-DECRYPTION SPLASH SCREEN -->
     <div id="splash-screen">
         <div class="splash-content">
-            <img src="https://raw.githubusercontent.com/ct-infosec/Chanakya-Security-Academy.in/refs/heads/main/csa%20wht%20trnp%403x.png" alt="CSA Logo" class="splash-logo-base">
+            <img src="https://raw.githubusercontent.com/ct-infosec/Chanakya-Security-Academy.in/refs/heads/main/csa%20logo.png" alt="CSA Logo" class="splash-logo-base">
         </div>
         <div class="splash-text-container">
             <div id="splash-text" class="splash-text"></div>
@@ -900,8 +1018,11 @@
         </div>
     </div>
 
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
     <!-- Mobile Toggle -->
-    <button class="toggle-menu" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+    <button class="toggle-menu" onclick="toggleSidebar()">
         <i class="ph ph-list" style="font-size: 24px;"></i>
     </button>
 
@@ -976,7 +1097,7 @@
                             <button class="btn btn-glass" onclick="addToCart('Master Cyber Intelligence', 14999, 'Chanakya Academy')">
                                 <i class="ph ph-plus"></i> Add to Cart
                             </button>
-                            <button class="btn btn-glass" onclick="addToWishlist('Master Cyber Intelligence', 14999, 'Chanakya Academy')" style="width:50px; padding:0;">
+                            <button class="btn btn-glass" onclick="addToWishlist('Master Cyber Intelligence', 14999, 'Chanakya Academy')" style="width:50px; padding:0; justify-content:center;">
                                 <i class="ph ph-heart" style="font-size:1.2rem"></i>
                             </button>
                         </div>
@@ -993,7 +1114,7 @@
                             <button class="btn btn-glass" onclick="addToCart('Tactical Defense 2026', 11999, 'Tactical Team')">
                                 <i class="ph ph-plus"></i> Add to Cart
                             </button>
-                            <button class="btn btn-glass" onclick="addToWishlist('Tactical Defense 2026', 11999, 'Tactical Team')" style="width:50px; padding:0;">
+                            <button class="btn btn-glass" onclick="addToWishlist('Tactical Defense 2026', 11999, 'Tactical Team')" style="width:50px; padding:0; justify-content:center;">
                                 <i class="ph ph-heart" style="font-size:1.2rem"></i>
                             </button>
                         </div>
@@ -1713,6 +1834,14 @@
             }, 30);
         }
 
+        // --- MOBILE SIDEBAR TOGGLE ---
+        function toggleSidebar() {
+            const sidebar = document.querySelector('.sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('active');
+        }
+
         // --- QUIZ LOGIC ---
         function startQuiz(quizId) {
             if(!quizzes[quizId]) {
@@ -2090,6 +2219,12 @@
 
         // --- ROUTER / NAVIGATION LOGIC ---
         function navigateTo(viewId, navElement) {
+            // Close sidebar on mobile if navigating
+            const sidebar = document.querySelector('.sidebar');
+            if(sidebar.classList.contains('open')) {
+                toggleSidebar();
+            }
+
             // 1. Hide all views
             document.querySelectorAll('.view-section').forEach(el => {
                 el.classList.remove('active-view');
