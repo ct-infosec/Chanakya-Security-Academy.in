@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chanakya Security Academy</title>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        /* --- 1. CORE VARIABLES & RESET (Dopamine Design & Dark Mode) --- */
+        :root {
+            /* Palette: Deep Space with Neon Accents */
+            --bg-body: #050505;
+            --bg-panel: #121212;
+            --bg-glass: rgba(20, 20, 25, 0.65);
+            --bg-glass-hover: rgba(40, 40, 50, 0.8);
+            
+            --primary: #6366f1; /* Indigo Neon */
+            --primary-glow: rgba(99, 102, 241, 0.4);
+            --accent: #ec4899;  /* Pink Neon */
+            --accent-glow: rgba(236, 72, 153, 0.4);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            
+            --font-display: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-mono: 'Courier New', Courier, monospace;
+            
+            --sidebar-width: 260px;
+            --header-height: 80px;
+        }
+
+        /* --- HYPER-DECRYPTION SPLASH SCREEN --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.5s ease-out;
+            
+            /* Cyber Grid Background */
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px;
+            overflow: hidden;
+        }
+
+        /* Scanlines Overlay */
+        #splash-screen::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        .splash-content {
+            position: relative;
+            width: 180px;
+            height: 180px;
+            z-index: 3;
+            margin-bottom: 30px;
+        }
+
+        .splash-logo-base {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            position: relative;
+            z-index: 10;
+            filter: drop-shadow(0 0 15px var(--primary));
+        }
+
+        /* Aggressive Glitch Layers */
+        .splash-content::before,
+        .splash-content::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://raw.githubusercontent.com/ct-infosec/Chanakya-Security-Academy.in/refs/heads/main/csa%20wht%20trnp%403x.png') no-repeat center center;
+            background-size: contain;
+            opacity: 0.7;
+            z-index: 5;
+        }
+
+        .splash-content::before {
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+            filter: drop-shadow(-2px 0 red);
+            clip-path: inset(0 0 0 0);
+        }
+
+        .splash-content::after {
+            animation: glitch-anim-2 2.5s infinite linear alternate-reverse;
+            filter: drop-shadow(2px 0 blue);
+            clip-path: inset(0 0 0 0);
+        }
+
+        .splash-text-container {
+            height: 30px; /* Fixed height to prevent jumps */
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .splash-text {
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--primary);
+            text-transform: uppercase;
+            text-shadow: 0 0 10px var(--primary);
+            white-space: nowrap;
+        }
+
+        /* Loading Bar */
+        .loading-bar-container {
+            width: 200px;
+            height: 4px;
+            background: rgba(255,255,255,0.1);
+            margin-top: 20px;
+            position: relative;
+            z-index: 3;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: loadProgress 3s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            40% { width: 60%; }
+            70% { width: 80%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); transform: translate(-4px, 1px); }
+            20% { clip-path: inset(60% 0 10% 0); transform: translate(4px, -1px); }
+            40% { clip-path: inset(40% 0 50% 0); transform: translate(-4px, 4px); }
+            60% { clip-path: inset(80% 0 5% 0); transform: translate(4px, -4px); }
+            80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 4px); }
+            100% { clip-path: inset(30% 0 50% 0); transform: translate(2px, -4px); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); transform: translate(4px, -1px); }
+            20% { clip-path: inset(80% 0 5% 0); transform: translate(-4px, 4px); }
+            40% { clip-path: inset(30% 0 20% 0); transform: translate(4px, 2px); }
+            60% { clip-path: inset(15% 0 80% 0); transform: translate(-2px, -4px); }
+            80% { clip-path: inset(55% 0 10% 0); transform: translate(2px, 4px); }
+            100% { clip-path: inset(40% 0 30% 0); transform: translate(-4px, 2px); }
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+            z-index: 2000;
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Cart Badge */
+        .cart-badge {
+            background: var(--danger);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: auto;
+            display: none; /* Hidden if 0 */
+        }
+
+        /* Wishlist Button Style */
+        .btn-icon {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-icon:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 10px var(--accent-glow);
+            transform: scale(1.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-display);
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        /* --- 2. SIDEBAR (Glassmorphism & Vertical Nav) --- */
+        .sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+        }
+        
+        .brand-logo-img {
+            width: 50px;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px var(--primary-glow));
+        }
+
+        .brand-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border-color: rgba(255,255,255,0.1);
+            transform: translateX(4px);
+        }
+
+        .nav-item.active i {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+        }
+
+        /* Search in Sidebar */
+        .sidebar-search {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            color: white;
+            width: 100%;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sidebar-search input {
+            background: transparent;
+            border: none;
+            outline: none;
+            color: white;
+            width: 100%;
+        }
+
+        /* User Profile Mini */
+        .user-mini {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(255,255,255,0.03);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #333;
+            object-fit: cover;
+        }
+
+        /* --- 3. MAIN CONTENT AREA --- */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 30px 40px;
+            width: calc(100% - var(--sidebar-width));
+            min-height: 100vh;
+        }
+
+        /* View Section Handling */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        .view-section.active-view {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- 4. HERO SECTION (Slideshow) --- */
+        .hero-slider {
+            position: relative;
+            height: 400px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            margin-bottom: 50px;
+            box-shadow: 0 20px 50px -10px rgba(0,0,0,0.5);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+            z-index: 1;
+        }
+        
+        .slide.active { opacity: 1; z-index: 2; }
+
+        .slide-content {
+            max-width: 600px;
+            z-index: 3;
+            position: relative;
+        }
+
+        /* Overlay for text readability */
+        .slide::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, #000 0%, rgba(0,0,0,0.6) 50%, transparent 100%);
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: var(--primary);
+            color: white;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 16px;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            font-weight: 900;
+        }
+
+        .hero-desc {
+            font-size: 1.1rem;
+            color: #ddd;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 50px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: white;
+            color: black;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255,255,255,0.3);
+        }
+
+        .btn-glass {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-left: 10px;
+        }
+        .btn-glass:hover { background: rgba(255,255,255,0.2); }
+
+        /* --- 5. SECTIONS & CARDS --- */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: end;
+            margin-bottom: 24px;
+        }
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .section-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 60px;
+        }
+
+        .course-card {
+            background: var(--bg-panel);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            border-color: var(--primary);
+        }
+
+        .card-thumb {
+            height: 160px;
+            width: 100%;
+            background: #222;
+            position: relative;
+        }
+        .card-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+        
+        .card-title {
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+
+        .rating {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* --- GENERIC UI ELEMENTS FOR NEW SECTIONS --- */
+        .glass-panel {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: var(--radius-lg);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; margin-bottom: 8px; color: var(--text-muted); font-size: 0.9rem; }
+        .form-input {
+            width: 100%;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+        }
+        .form-input:focus { border-color: var(--primary); outline: none; }
+
+        .list-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .list-row:last-child { border-bottom: none; }
+
+        /* --- 6. PLAYER VIEW --- */
+        .player-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        /* Reuse grid for Checkout View */
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        .video-container {
+            width: 100%;
+            background: #000;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .course-playlist {
+            background: var(--bg-panel);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            max-height: 600px; /* Match typical video height */
+        }
+        
+        .playlist-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* LMS: Progress Bar */
+        .progress-container {
+            padding: 0 20px 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .playlist-items {
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .playlist-item {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+        .playlist-item:hover { background: rgba(255,255,255,0.05); }
+        .playlist-item.active { 
+            background: rgba(99, 102, 241, 0.1); 
+            border-left: 3px solid var(--primary);
+        }
+        .playlist-item.completed .play-icon {
+            color: var(--success);
+        }
+
+        .play-icon {
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Player Tabs */
+        .tabs-container {
+            margin-top: 0px;
+        }
+        
+        .tabs-header {
+            display: flex;
+            gap: 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1rem;
+            padding-bottom: 15px;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .tab-btn.active {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            box-shadow: 0 -2px 10px var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        .tab-content.active { display: block; }
+
+        /* LMS: Note Item */
+        .note-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--accent);
+        }
+        .note-timestamp {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        /* --- 7. NEW PROFILE LAYOUT STYLES --- */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+        .profile-sidebar {
+            background: var(--bg-panel);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .profile-header-mini {
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: linear-gradient(to bottom, rgba(99,102,241,0.1), transparent);
+        }
+        .p-menu {
+            padding: 10px 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .p-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 24px;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        .p-menu-item:hover {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+        }
+        .p-menu-item.active {
+            background: rgba(99, 102, 241, 0.08);
+            color: var(--text-main);
+            border-left-color: var(--primary);
+        }
+        .p-menu-item.text-danger {
+            color: var(--danger);
+            margin-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .p-menu-item.text-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .p-content-area {
+            background: var(--bg-panel);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 30px;
+            min-height: 600px;
+        }
+
+        .p-tab-view { display: none; }
+        .p-tab-view.active { display: block; animation: fadeIn 0.3s ease; }
+
+        /* LMS: Quiz Interface */
+        .quiz-container {
+            display: none; /* Hidden by default */
+        }
+        .quiz-option {
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.05); }
+        .quiz-option.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+        .quiz-result-score {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--success);
+            margin: 20px 0;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .player-layout { grid-template-columns: 1fr; }
+            .checkout-layout { grid-template-columns: 1fr; }
+            .course-playlist { max-height: 400px; }
+            .profile-layout { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; width: 100%; padding: 20px; }
+            .hero-title { font-size: 2rem; }
+            .toggle-menu { display: block; position: fixed; top: 20px; right: 20px; z-index: 2000; background: var(--bg-panel); padding: 10px; border-radius: 8px; }
+        }
+        
+        .toggle-menu { display: none; border: 1px solid #333; color: white; cursor:pointer;}
+
+    </style>
+</head>
+<body>
+
+    <!-- HYPER-DECRYPTION SPLASH SCREEN -->
+    <div id="splash-screen">
+        <div class="splash-content">
+            <img src="https://raw.githubusercontent.com/ct-infosec/Chanakya-Security-Academy.in/refs/heads/main/csa%20wht%20trnp%403x.png" alt="CSA Logo" class="splash-logo-base">
+        </div>
+        <div class="splash-text-container">
+            <div id="splash-text" class="splash-text"></div>
+        </div>
+        <div class="loading-bar-container">
+            <div class="loading-bar"></div>
+        </div>
+    </div>
+
+    <!-- Mobile Toggle -->
+    <button class="toggle-menu" onclick="document.querySelector('.sidebar').classList.toggle('open')">
+        <i class="ph ph-list" style="font-size: 24px;"></i>
+    </button>
+
+    <!-- 1. LEFT SIDEBAR -->
+    <nav class="sidebar">
+        <div class="brand">
+            <img src="https://raw.githubusercontent.com/ct-infosec/Chanakya-Security-Academy.in/refs/heads/main/csa%20wht%20trnp%403x.png" alt="CSA Logo" class="brand-logo-img">
+            <div class="brand-text">CHANAKYA</div>
+        </div>
+
+        <div class="sidebar-search">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Search with filters...">
+            <i class="ph ph-sliders"></i>
+        </div>
+
+        <div class="nav-group">
+            <a href="#" class="nav-item active" onclick="navigateTo('home-view', this)">
+                <i class="ph ph-house"></i> <span>Home</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('profile-view', this)">
+                <i class="ph ph-user"></i> <span>Profile</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('cart-view', this)">
+                <i class="ph ph-shopping-cart"></i> <span>Cart</span>
+                <span id="nav-cart-badge" class="cart-badge">2</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('library-view', this)">
+                <i class="ph ph-books"></i> <span>Digital Library</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('practice-view', this)">
+                <i class="ph ph-pencil-circle"></i> <span>Practice / Mock</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('exam-view', this)">
+                <i class="ph ph-exam"></i> <span>Exam Center</span>
+            </a>
+            <a href="#" class="nav-item" onclick="navigateTo('certificate-view', this)">
+                <i class="ph ph-certificate"></i> <span>Certificates</span>
+            </a>
+            <div style="flex-grow:1"></div>
+            <a href="#" class="nav-item" onclick="navigateTo('settings-view', this)">
+                <i class="ph ph-gear"></i> <span>Settings</span>
+            </a>
+        </div>
+
+        <div class="user-mini">
+            <img src="https://ui-avatars.com/api/?name=John+Doe&background=random" alt="User" class="avatar">
+            <div style="font-size: 0.9rem;">
+                <div style="font-weight:bold">Cadet John</div>
+                <div style="color:var(--text-muted); font-size: 0.8rem">Pro Member</div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. MAIN CONTENT -->
+    <main class="main-content">
+        
+        <!-- ================= DASHBOARD VIEW ================= -->
+        <div id="home-view" class="view-section active-view">
+            <!-- Hero Slideshow -->
+            <div class="hero-slider">
+                <!-- Slide 1 -->
+                <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=2070&auto=format&fit=crop');">
+                    <div class="slide-content">
+                        <span class="badge">TRENDING NOW</span>
+                        <h1 class="hero-title">Master Cyber Intelligence</h1>
+                        <p class="hero-desc">Advanced threat detection and security protocols for the modern age. Join 10k+ cadets today.</p>
+                        <div>
+                            <button class="btn btn-primary" onclick="openPlayer()">
+                                <i class="ph ph-play-circle" style="font-size:1.2rem"></i> Watch Now
+                            </button>
+                            <button class="btn btn-glass" onclick="addToCart('Master Cyber Intelligence', 14999, 'Chanakya Academy')">
+                                <i class="ph ph-plus"></i> Add to Cart
+                            </button>
+                            <button class="btn btn-glass" onclick="addToWishlist('Master Cyber Intelligence', 14999, 'Chanakya Academy')" style="width:50px; padding:0;">
+                                <i class="ph ph-heart" style="font-size:1.2rem"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Slide 2 -->
+                <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop');">
+                    <div class="slide-content">
+                        <span class="badge">UPCOMING LIVE</span>
+                        <h1 class="hero-title">Tactical Defense 2026</h1>
+                        <p class="hero-desc">Live simulation training starting this weekend. Pre-register for exclusive access.</p>
+                        <div>
+                            <button class="btn btn-primary">Pre-Register</button>
+                            <button class="btn btn-glass" onclick="addToCart('Tactical Defense 2026', 11999, 'Tactical Team')">
+                                <i class="ph ph-plus"></i> Add to Cart
+                            </button>
+                            <button class="btn btn-glass" onclick="addToWishlist('Tactical Defense 2026', 11999, 'Tactical Team')" style="width:50px; padding:0;">
+                                <i class="ph ph-heart" style="font-size:1.2rem"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Sections -->
+            <div class="section-header">
+                <div class="section-title">Trending Courses</div>
+                <a href="#" class="section-link">View All</a>
+            </div>
+            
+            <div class="course-grid">
+                <!-- Card 1 -->
+                <div class="course-card" onclick="openPlayer()">
+                    <div class="card-thumb">
+                        <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=800&auto=format&fit=crop" alt="Course">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span>Security</span>
+                            <div class="rating"><i class="ph ph-star-fill"></i> 4.9</div>
+                        </div>
+                        <h3 class="card-title">Network Defense Essentials</h3>
+                        <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 12px;">By Dr. A. Sharma</div>
+                        
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                            <span style="font-weight:bold; color:var(--primary); font-size:1.1rem;">₹4,499</span>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-icon" onclick="event.stopPropagation(); addToWishlist('Network Defense Essentials', 4499, 'Dr. A. Sharma')">
+                                    <i class="ph ph-heart"></i>
+                                </button>
+                                <button class="btn btn-primary" style="padding: 6px 16px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCart('Network Defense Essentials', 4499, 'Dr. A. Sharma')">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Card 2 -->
+                <div class="course-card" onclick="openPlayer()">
+                    <div class="card-thumb">
+                        <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop" alt="Course">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span>Coding</span>
+                            <div class="rating"><i class="ph ph-star-fill"></i> 4.7</div>
+                        </div>
+                        <h3 class="card-title">Python for Ethical Hacking</h3>
+                        <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 12px;">By Tech Team</div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                            <span style="font-weight:bold; color:var(--primary); font-size:1.1rem;">₹3,499</span>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-icon" onclick="event.stopPropagation(); addToWishlist('Python for Ethical Hacking', 3499, 'Tech Team')">
+                                    <i class="ph ph-heart"></i>
+                                </button>
+                                <button class="btn btn-primary" style="padding: 6px 16px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCart('Python for Ethical Hacking', 3499, 'Tech Team')">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="course-card" onclick="openPlayer()">
+                    <div class="card-thumb">
+                        <img src="https://images.unsplash.com/photo-1551808525-51a94da548ce?w=800&auto=format&fit=crop" alt="Course">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span>Strategy</span>
+                            <div class="rating"><i class="ph ph-star-fill"></i> 4.8</div>
+                        </div>
+                        <h3 class="card-title">Strategic Crisis Management</h3>
+                        <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 12px;">By Capt. R. Singh</div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                            <span style="font-weight:bold; color:var(--primary); font-size:1.1rem;">₹2,999</span>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-icon" onclick="event.stopPropagation(); addToWishlist('Strategic Crisis Management', 2999, 'Capt. R. Singh')">
+                                    <i class="ph ph-heart"></i>
+                                </button>
+                                <button class="btn btn-primary" style="padding: 6px 16px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCart('Strategic Crisis Management', 2999, 'Capt. R. Singh')">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recommended Section -->
+            <div class="section-header">
+                <div class="section-title">Recommended For You</div>
+                <div style="font-size:0.9rem; color:var(--text-muted)">Based on your ratings</div>
+            </div>
+             <div class="course-grid">
+                <div class="course-card" onclick="openPlayer()">
+                    <div class="card-thumb">
+                        <img src="https://images.unsplash.com/photo-1573164713714-d95e436ab8d6?w=800&auto=format&fit=crop" alt="Course">
+                    </div>
+                    <div class="card-content">
+                        <div class="card-meta">
+                            <span>Legal</span>
+                            <div class="rating"><i class="ph ph-star-fill"></i> 4.6</div>
+                        </div>
+                        <h3 class="card-title">Cyber Law Fundamentals</h3>
+                        <div style="color:var(--text-muted); font-size:0.9rem; margin-bottom: 12px;">By Advocate V.K.</div>
+
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px; border-top:1px solid rgba(255,255,255,0.05); padding-top:10px;">
+                            <span style="font-weight:bold; color:var(--primary); font-size:1.1rem;">₹2,499</span>
+                            <div style="display:flex; gap:8px;">
+                                <button class="btn-icon" onclick="event.stopPropagation(); addToWishlist('Cyber Law Fundamentals', 2499, 'Advocate V.K.')">
+                                    <i class="ph ph-heart"></i>
+                                </button>
+                                <button class="btn btn-primary" style="padding: 6px 16px; font-size: 0.85rem;" onclick="event.stopPropagation(); addToCart('Cyber Law Fundamentals', 2499, 'Advocate V.K.')">
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <!-- ================= PROFILE VIEW ================= -->
+        <div id="profile-view" class="view-section">
+            <h2 class="section-title" style="margin-bottom:30px;">Profile & Settings</h2>
+            
+            <div class="profile-layout">
+                <!-- Profile Sidebar Navigation -->
+                <div class="profile-sidebar">
+                    <div class="profile-header-mini">
+                        <img src="https://ui-avatars.com/api/?name=John+Doe&background=random&size=128" style="width:80px; height:80px; border-radius:50%; margin-bottom:15px; border:2px solid var(--primary);">
+                        <div style="font-weight:bold; font-size:1.1rem;">Cadet John Doe</div>
+                        <div style="color:var(--text-muted); font-size:0.85rem;">Security Specialist</div>
+                    </div>
+                    
+                    <div class="p-menu">
+                        <button class="p-menu-item active" onclick="switchProfileTab('p-edit')"><i class="ph ph-pencil"></i> Edit Profile</button>
+                        <button class="p-menu-item" onclick="switchProfileTab('p-learning')"><i class="ph ph-graduation-cap"></i> My Learning</button>
+                        <button class="p-menu-item" onclick="switchProfileTab('p-wishlist')"><i class="ph ph-heart"></i> Wishlist</button>
+                        <button class="p-menu-item" onclick="switchProfileTab('p-notifications')"><i class="ph ph-bell"></i> Notifications</button>
+                        <button class="p-menu-item" onclick="switchProfileTab('p-messages')"><i class="ph ph-envelope"></i> Messages</button>
+                        <button class="p-menu-item" onclick="switchProfileTab('p-account')"><i class="ph ph-gear"></i> Account Settings</button>
+                        <button class="p-menu-item" onclick="switchProfileTab('p-payment')"><i class="ph ph-credit-card"></i> Payment Methods</button>
+                        <button class="p-menu-item" onclick="switchProfileTab('p-subs')"><i class="ph ph-crown"></i> Subscriptions</button>
+                        <button class="p-menu-item" onclick="switchProfileTab('p-history')"><i class="ph ph-receipt"></i> Purchase History</button>
+                        <button class="p-menu-item" onclick="switchProfileTab('p-help')"><i class="ph ph-question"></i> Help & Support</button>
+                        
+                        <button class="p-menu-item text-danger" onclick="alert('Logging out...')"><i class="ph ph-sign-out"></i> Log Out</button>
+                        <button class="p-menu-item text-danger" onclick="alert('Are you sure you want to delete your account?')"><i class="ph ph-trash"></i> Delete Account</button>
+                    </div>
+                </div>
+
+                <!-- Profile Content Area -->
+                <div class="p-content-area">
+                    
+                    <!-- 1. Edit Profile -->
+                    <div id="p-edit" class="p-tab-view active">
+                        <h3 style="margin-bottom:20px;">Edit Profile</h3>
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-input" value="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" value="john.doe@chanakya.edu">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bio / About</label>
+                            <textarea class="form-input" style="height:100px;">Passionate about network security and ethical hacking.</textarea>
+                        </div>
+                        <button class="btn btn-primary">Save Changes</button>
+                    </div>
+
+                    <!-- 2. My Learning -->
+                    <div id="p-learning" class="p-tab-view">
+                        <h3 style="margin-bottom:20px;">My Learning</h3>
+                        <div class="course-grid">
+                            <div class="course-card">
+                                <div class="card-thumb" style="height:120px;">
+                                    <img src="https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=800" style="width:100%; height:100%; object-fit:cover;">
+                                </div>
+                                <div style="padding:15px;">
+                                    <h4>Network Defense</h4>
+                                    <div style="height:4px; background:#333; margin-top:10px; border-radius:2px;"><div style="width:40%; height:100%; background:var(--primary);"></div></div>
+                                    <div style="font-size:0.8rem; color:var(--text-muted); margin-top:5px;">40% Complete</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Wishlist -->
+                    <div id="p-wishlist" class="p-tab-view">
+                        <h3 style="margin-bottom:20px;">My Wishlist</h3>
+                        <div id="wishlist-items-container">
+                            <p style="color:var(--text-muted);">Saved courses will appear here.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 4. Notifications -->
+                    <div id="p-notifications" class="p-tab-view">
+                        <h3 style="margin-bottom:20px;">Notifications</h3>
+                        <div class="list-row">
+                            <div>
+                                <div>New Course Added: AI Security</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">2 hours ago</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Placeholders for others -->
+                    <div id="p-messages" class="p-tab-view"><h3>Messages</h3><p>Inbox empty.</p></div>
+                    <div id="p-account" class="p-tab-view"><h3>Account Settings</h3><p>Password and privacy settings.</p></div>
+                    <div id="p-payment" class="p-tab-view"><h3>Payment Methods</h3><p>Manage cards and UPI.</p></div>
+                    <div id="p-subs" class="p-tab-view"><h3>Subscriptions</h3><p>Active Plan: Pro Member</p></div>
+                    <div id="p-history" class="p-tab-view"><h3>Purchase History</h3><p>No recent transactions.</p></div>
+                    <div id="p-help" class="p-tab-view"><h3>Help & Support</h3><p>Contact support@chanakya.edu</p></div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CART VIEW ================= -->
+        <div id="cart-view" class="view-section">
+            <h2 class="section-title" style="margin-bottom:30px;">Your Cart</h2>
+            <div class="glass-panel">
+                <div id="cart-items-container">
+                    <!-- Items will be injected via JS -->
+                </div>
+                
+                <div id="cart-footer" style="margin-top:20px; text-align:right; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;">
+                    <div id="cart-total-display" style="font-size:1.2rem; font-weight:bold; margin-bottom:15px;">Total: ₹0</div>
+                    <button id="checkout-btn" class="btn btn-primary" onclick="goToCheckout()">Proceed to Checkout</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================= CHECKOUT VIEW (NEW) ================= -->
+        <div id="checkout-view" class="view-section">
+            <div style="margin-bottom: 20px;">
+                <button onclick="navigateTo('cart-view')" style="background:none; border:none; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:5px;">
+                    <i class="ph ph-arrow-left"></i> Back to Cart
+                </button>
+            </div>
+            
+            <h2 class="section-title" style="margin-bottom:30px;">Checkout</h2>
+            
+            <div class="checkout-layout">
+                <!-- Left: Forms -->
+                <div>
+                    <div class="glass-panel">
+                        <h3 style="margin-bottom:20px; color:var(--primary);">Billing Information</h3>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" class="form-input" value="John">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" class="form-input" value="Doe">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-input" value="john.doe@chanakya.edu">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Billing Address</label>
+                            <input type="text" class="form-input" placeholder="123 Security Lane">
+                        </div>
+                    </div>
+                    
+                    <div class="glass-panel">
+                        <h3 style="margin-bottom:20px; color:var(--primary);">Payment Method</h3>
+                        <div style="display:flex; gap:15px; margin-bottom:20px;">
+                            <button class="btn btn-glass" style="flex:1; border-color:var(--primary); background:rgba(99,102,241,0.1);">
+                                <i class="ph ph-credit-card" style="font-size:1.2rem;"></i> Card
+                            </button>
+                            <button class="btn btn-glass" style="flex:1;">
+                                <i class="ph ph-qr-code" style="font-size:1.2rem;"></i> UPI / QR
+                            </button>
+                            <button class="btn btn-glass" style="flex:1;">
+                                <i class="ph ph-paypal-logo" style="font-size:1.2rem;"></i> PayPal
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Card Number</label>
+                            <input type="text" class="form-input" placeholder="0000 0000 0000 0000">
+                        </div>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px;">
+                            <div class="form-group">
+                                <label class="form-label">Expiry</label>
+                                <input type="text" class="form-input" placeholder="MM/YY">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">CVV</label>
+                                <input type="text" class="form-input" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right: Summary -->
+                <div>
+                     <div class="glass-panel" style="position:sticky; top:20px;">
+                        <h3 style="margin-bottom:20px;">Order Summary</h3>
+                        <div id="checkout-items-list" style="margin-bottom:20px; max-height:300px; overflow-y:auto; padding-right:5px;">
+                            <!-- Dynamic Items -->
+                        </div>
+                        
+                        <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:15px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-muted);">
+                                <span>Subtotal</span>
+                                <span id="checkout-subtotal">₹0</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--text-muted);">
+                                <span>Tax (18%)</span>
+                                <span id="checkout-tax">₹0</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-top:15px; font-size:1.2rem; font-weight:bold; color:white;">
+                                <span>Total</span>
+                                <span id="checkout-final-total">₹0</span>
+                            </div>
+                        </div>
+                        
+                        <button id="pay-btn" class="btn btn-primary" style="width:100%; margin-top:20px; justify-content:center;" onclick="processPayment()">
+                            Pay Now <i class="ph ph-arrow-right"></i>
+                        </button>
+                        
+                        <div style="text-align:center; font-size:0.8rem; color:var(--text-muted); margin-top:15px;">
+                            <i class="ph ph-lock-key"></i> Secure SSL Encryption
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= DIGITAL LIBRARY VIEW ================= -->
+        <div id="library-view" class="view-section">
+            <h2 class="section-title" style="margin-bottom:30px;">Digital Library</h2>
+            <div class="course-grid">
+                <div class="course-card">
+                    <div class="card-thumb" style="background:#1e293b; display:flex; align-items:center; justify-content:center;">
+                        <i class="ph ph-file-pdf" style="font-size:4rem; color:var(--text-muted);"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Cyber Warfare Tactics</h3>
+                        <p style="color:var(--text-muted); font-size:0.9rem;">PDF • 240 Pages</p>
+                        <button class="btn btn-glass" style="margin-top:10px; width:100%; margin-left:0;">Read Now</button>
+                    </div>
+                </div>
+                <div class="course-card">
+                    <div class="card-thumb" style="background:#1e293b; display:flex; align-items:center; justify-content:center;">
+                        <i class="ph ph-file-pdf" style="font-size:4rem; color:var(--text-muted);"></i>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Defense Protocols Manual</h3>
+                        <p style="color:var(--text-muted); font-size:0.9rem;">PDF • 120 Pages</p>
+                        <button class="btn btn-glass" style="margin-top:10px; width:100%; margin-left:0;">Read Now</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PRACTICE / MOCK VIEW ================= -->
+        <div id="practice-view" class="view-section">
+            <h2 class="section-title" style="margin-bottom:30px;">Practice & Mock Tests</h2>
+            
+            <!-- Default List View -->
+            <div id="quiz-list-container">
+                <div class="glass-panel">
+                    <div class="list-row">
+                        <div>
+                            <div style="font-weight:bold; font-size:1.1rem;">Full Length Mock Test 1</div>
+                            <div style="color:var(--text-muted); font-size:0.9rem;">120 Questions • 180 Minutes</div>
+                        </div>
+                        <button class="btn btn-primary" onclick="startQuiz('mock-1')">Start Test</button>
+                    </div>
+                    <div class="list-row">
+                        <div>
+                            <div style="font-weight:bold; font-size:1.1rem;">Cyber Security Quiz - Level 2</div>
+                            <div style="color:var(--text-muted); font-size:0.9rem;">5 Questions • 10 Minutes</div>
+                        </div>
+                        <button class="btn btn-primary" onclick="startQuiz('quiz-1')">Start Quiz</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Interface (Hidden by default) -->
+            <div id="quiz-interface" class="quiz-container">
+                <div class="glass-panel">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                        <h3 id="quiz-title">Quiz Title</h3>
+                        <div id="quiz-timer" style="color:var(--warning); font-weight:bold;">10:00</div>
+                    </div>
+                    
+                    <div id="quiz-question-container" style="min-height:200px;">
+                        <!-- Questions injected here -->
+                        <h4 id="question-text" style="font-size:1.2rem; margin-bottom:20px;">Question goes here?</h4>
+                        <div id="options-container">
+                            <!-- Options -->
+                        </div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-top:30px;">
+                        <button class="btn btn-glass" onclick="prevQuestion()" id="btn-prev">Previous</button>
+                        <button class="btn btn-primary" onclick="nextQuestion()" id="btn-next">Next</button>
+                        <button class="btn btn-primary" onclick="submitQuiz()" id="btn-submit" style="display:none; background:var(--success);">Submit Quiz</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quiz Result (Hidden) -->
+            <div id="quiz-result" class="quiz-container" style="text-align:center;">
+                <div class="glass-panel">
+                    <i class="ph ph-trophy" style="font-size:4rem; color:var(--warning);"></i>
+                    <h2>Quiz Completed!</h2>
+                    <div class="quiz-result-score" id="score-display">80%</div>
+                    <p style="color:var(--text-muted); margin-bottom:30px;">Great job cadet! You have demonstrated strong knowledge in network defense.</p>
+                    <button class="btn btn-primary" onclick="resetQuizUI()">Back to Practice</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= EXAM CENTER VIEW ================= -->
+        <div id="exam-view" class="view-section">
+            <h2 class="section-title" style="margin-bottom:30px;">Exam Center</h2>
+            <div class="glass-panel">
+                 <div style="padding:20px; border:1px solid var(--accent); border-radius:10px; background:rgba(236, 72, 153, 0.05); margin-bottom:20px;">
+                     <h3 style="color:var(--accent);">Upcoming Scheduled Exam</h3>
+                     <p style="margin:10px 0;">Final Certification Exam: Network Defense</p>
+                     <div style="font-size:0.9rem; color:var(--text-muted);">Date: March 15, 2026 • Time: 10:00 AM IST</div>
+                     <button class="btn btn-glass" style="margin-top:15px; margin-left:0;">View Admit Card</button>
+                 </div>
+                 <h3>Past Exams</h3>
+                 <div class="list-row">
+                     <div>Basic Security Assessment</div>
+                     <div style="color:var(--success);">Passed (85%)</div>
+                 </div>
+            </div>
+        </div>
+
+         <!-- ================= CERTIFICATES VIEW ================= -->
+        <div id="certificate-view" class="view-section">
+            <h2 class="section-title" style="margin-bottom:30px;">My Certificates</h2>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
+                <div class="glass-panel" style="text-align:center;">
+                    <i class="ph ph-medal" style="font-size:4rem; color:gold; margin-bottom:15px;"></i>
+                    <h3>Certified Security Associate</h3>
+                    <p style="color:var(--text-muted); margin-bottom:20px;">Issued: Jan 2025</p>
+                    <button class="btn btn-primary" style="width:100%">Download PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SETTINGS VIEW ================= -->
+        <div id="settings-view" class="view-section">
+            <h2 class="section-title" style="margin-bottom:30px;">Settings</h2>
+            <div class="glass-panel">
+                <div class="list-row">
+                    <div>
+                        <div style="font-weight:bold;">Email Notifications</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">Receive updates about new courses</div>
+                    </div>
+                    <div style="width:50px; height:26px; background:var(--primary); border-radius:13px; position:relative;">
+                        <div style="width:20px; height:20px; background:white; border-radius:50%; position:absolute; right:3px; top:3px;"></div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div>
+                        <div style="font-weight:bold;">Dark Mode</div>
+                        <div style="font-size:0.8rem; color:var(--text-muted);">System default is active</div>
+                    </div>
+                     <div style="width:50px; height:26px; background:var(--primary); border-radius:13px; position:relative;">
+                        <div style="width:20px; height:20px; background:white; border-radius:50%; position:absolute; right:3px; top:3px;"></div>
+                    </div>
+                </div>
+                <div class="list-row" style="cursor:pointer; color:var(--accent);">
+                    <div style="font-weight:bold;">Log Out</div>
+                    <i class="ph ph-sign-out"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- ================= PLAYER VIEW ================= -->
+        <div id="player-view" class="view-section">
+            <div style="margin-bottom: 20px;">
+                <button onclick="navigateTo('home-view')" style="background:none; border:none; color:var(--text-muted); cursor:pointer; display:flex; align-items:center; gap:5px;">
+                    <i class="ph ph-arrow-left"></i> Back to Dashboard
+                </button>
+            </div>
+
+            <div class="player-layout">
+                <!-- Left Column: Video & Tabs -->
+                <div>
+                    <div class="video-container">
+                        <!-- Unlisted/Public YouTube Embed -->
+                        <iframe id="main-video" src="https://www.youtube.com/embed/36YnV9STBqc?enablejsapi=1" title="YouTube video player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    
+                    <div style="margin-top:20px; margin-bottom:30px;">
+                        <h1 style="font-size:1.8rem; margin-bottom:10px;">Network Defense Essentials: Module 1</h1>
+                        <div style="display:flex; gap:15px; font-size:0.9rem; color:var(--text-muted);">
+                            <span><i class="ph ph-eye"></i> 12,403 Views</span>
+                            <span><i class="ph ph-clock"></i> Last updated Feb 2026</span>
+                        </div>
+                    </div>
+
+                    <div class="tabs-container">
+                        <div class="tabs-header">
+                            <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+                            <button class="tab-btn" onclick="switchTab('qa')">Q&A</button>
+                            <button class="tab-btn" onclick="switchTab('notes')">Notes</button>
+                            <button class="tab-btn" onclick="switchTab('announcements')">Announcements</button>
+                            <button class="tab-btn" onclick="switchTab('reviews')">Reviews</button>
+                            <button class="tab-btn" onclick="switchTab('tools')">Learning Tools</button>
+                        </div>
+
+                        <div id="overview" class="tab-content active">
+                            <p>This comprehensive module introduces the core concepts of network security. We will cover firewalls, intrusion detection systems, and basic cryptography.</p>
+                            <br>
+                            <h3>What you'll learn</h3>
+                            <ul style="margin-left:20px; margin-top:10px; color:var(--text-muted);">
+                                <li>OSI Model Vulnerabilities</li>
+                                <li>Packet Analysis Basics</li>
+                                <li>Setting up a secure perimeter</li>
+                            </ul>
+                        </div>
+                        <div id="qa" class="tab-content">
+                            <div style="background:var(--bg-panel); padding:20px; border-radius:10px; margin-bottom:15px;">
+                                <strong>Cadet_01:</strong> Is Wireshark required for this module?
+                                <div style="margin-top:5px; color:var(--primary);">Instructor: Yes, please install v3.0+.</div>
+                            </div>
+                        </div>
+                        <div id="notes" class="tab-content">
+                            <div style="margin-bottom:15px; display:flex; gap:10px;">
+                                <input type="text" id="note-input" class="form-input" placeholder="Type your personal notes here..." style="flex:1;">
+                                <button class="btn btn-primary" onclick="saveNote()">Save Note</button>
+                            </div>
+                            <div id="notes-list-container">
+                                <!-- Notes injected here -->
+                                <p style="color:var(--text-muted); font-size:0.9rem;">No notes saved yet.</p>
+                            </div>
+                        </div>
+                        <div id="announcements" class="tab-content">No new announcements.</div>
+                        <div id="reviews" class="tab-content">
+                            <div style="margin-bottom:15px;">
+                                <div style="color:#fbbf24;">★★★★★</div>
+                                <p>"Excellent pacing and visuals!" - Cadet R.</p>
+                            </div>
+                        </div>
+                        <div id="tools" class="tab-content">
+                            <button class="btn btn-glass" style="font-size:0.9rem">Download PDF Resource</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Course Content -->
+                <div class="course-playlist">
+                    <div class="playlist-header">Course Content</div>
+                    
+                    <!-- LMS: Course Progress -->
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Progress</span>
+                            <span id="progress-percent">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progress-bar" class="progress-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="playlist-items" id="playlist-container">
+                        <div class="playlist-item active" onclick="changeVideo('36YnV9STBqc', this)" data-id="v1">
+                            <i class="ph ph-play-circle play-icon"></i>
+                            <div style="flex:1;">
+                                <div style="font-size:0.9rem; font-weight:600;">1. Introduction to Security</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">12:30</div>
+                            </div>
+                            <button class="btn-icon" style="width:24px; height:24px; font-size:0.8rem;" onclick="event.stopPropagation(); markComplete(this)" title="Mark as Complete"><i class="ph ph-check"></i></button>
+                        </div>
+                        <div class="playlist-item" onclick="changeVideo('H7Q018y_1wE', this)" data-id="v2">
+                            <i class="ph ph-lock play-icon"></i>
+                            <div style="flex:1;">
+                                <div style="font-size:0.9rem; font-weight:600;">2. Firewall Configuration</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">18:45</div>
+                            </div>
+                            <button class="btn-icon" style="width:24px; height:24px; font-size:0.8rem;" onclick="event.stopPropagation(); markComplete(this)" title="Mark as Complete"><i class="ph ph-check"></i></button>
+                        </div>
+                        <div class="playlist-item" onclick="changeVideo('Wq3978rPgMA', this)" data-id="v3">
+                            <i class="ph ph-shield-check play-icon"></i>
+                            <div style="flex:1;">
+                                <div style="font-size:0.9rem; font-weight:600;">3. Intrusion Detection</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">15:20</div>
+                            </div>
+                            <button class="btn-icon" style="width:24px; height:24px; font-size:0.8rem;" onclick="event.stopPropagation(); markComplete(this)" title="Mark as Complete"><i class="ph ph-check"></i></button>
+                        </div>
+                        <div class="playlist-item" onclick="changeVideo('36YnV9STBqc', this)" data-id="v4">
+                            <i class="ph ph-code play-icon"></i>
+                            <div style="flex:1;">
+                                <div style="font-size:0.9rem; font-weight:600;">4. Basic Cryptography</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">22:10</div>
+                            </div>
+                            <button class="btn-icon" style="width:24px; height:24px; font-size:0.8rem;" onclick="event.stopPropagation(); markComplete(this)" title="Mark as Complete"><i class="ph ph-check"></i></button>
+                        </div>
+                        <div class="playlist-item" onclick="changeVideo('36YnV9STBqc', this)" data-id="v5">
+                            <i class="ph ph-bug play-icon"></i>
+                            <div style="flex:1;">
+                                <div style="font-size:0.9rem; font-weight:600;">5. Mock Attack Sim</div>
+                                <div style="font-size:0.8rem; color:var(--text-muted);">30:00</div>
+                            </div>
+                            <button class="btn-icon" style="width:24px; height:24px; font-size:0.8rem;" onclick="event.stopPropagation(); markComplete(this)" title="Mark as Complete"><i class="ph ph-check"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Trending Below Video -->
+            <div class="section-header" style="margin-top:50px;">
+                <div class="section-title">You Might Also Like</div>
+            </div>
+            <div class="course-grid">
+                <!-- Reusing a card for display -->
+                <div class="course-card">
+                    <div class="card-thumb">
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=800&auto=format&fit=crop" alt="Course">
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">Advanced Threat Hunting</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">
+        <i class="ph ph-check-circle" style="font-size: 1.5rem;"></i>
+        <div>
+            <div style="font-weight: bold;" id="toast-title">Notification</div>
+            <div style="font-size: 0.85rem; opacity: 0.9;" id="toast-message">Message here</div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA ---
+        let cartItems = [
+            { id: 1, title: "Advanced Penetration Testing", author: "Security Team", price: 3999 },
+            { id: 2, title: "Military Strategy 101", author: "Col. Sanders", price: 2499 }
+        ];
+
+        let wishlistItems = [];
+        let savedNotes = [];
+
+        // Quiz Data
+        const quizzes = {
+            'quiz-1': {
+                title: "Cyber Security Quiz - Level 2",
+                questions: [
+                    { q: "What does CIA stand for in information security?", options: ["Central Intelligence Agency", "Confidentiality, Integrity, Availability", "Computer Internet Access", "Control, Integrity, Authorization"], ans: 1 },
+                    { q: "Which protocol is used for secure communication over a computer network?", options: ["HTTP", "FTP", "HTTPS", "SMTP"], ans: 2 },
+                    { q: "What is a phishing attack?", options: ["A physical attack on servers", "Attempting to acquire sensitive data by masquerading as a trustworthy entity", "Injecting SQL code", "Overloading a server with traffic"], ans: 1 },
+                    { q: "Which of these is NOT a strong password practice?", options: ["Using a mix of characters", "Changing passwords regularly", "Using the same password for all accounts", "Using multi-factor authentication"], ans: 2 },
+                    { q: "What is a Firewall used for?", options: ["To burn viruses", "To monitor and control incoming/outgoing network traffic", "To speed up the internet", "To physically protect the computer"], ans: 1 }
+                ]
+            }
+        };
+        
+        let currentQuiz = null;
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+
+
+        function initApp() {
+            renderCart();
+            updateBadge();
+            
+            // --- SPLASH SCREEN HYPER-DECRYPTION LOGIC ---
+            const splashTextEl = document.getElementById('splash-text');
+            const targetText = "CHANAKYA SECURITY ACADEMY";
+            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+            let iterations = 0;
+            
+            const interval = setInterval(() => {
+                splashTextEl.innerText = targetText
+                    .split("")
+                    .map((letter, index) => {
+                        if(index < iterations) {
+                            return targetText[index];
+                        }
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    })
+                    .join("");
+                
+                if(iterations >= targetText.length){ 
+                    clearInterval(interval);
+                    // Fade out splash after decryption + loading bar completes (approx 3s total)
+                    setTimeout(() => {
+                        const splash = document.getElementById('splash-screen');
+                        splash.style.opacity = '0';
+                        setTimeout(() => {
+                            splash.style.display = 'none';
+                        }, 500);
+                    }, 800);
+                }
+                
+                iterations += 1/2; // Speed of decryption
+            }, 30);
+        }
+
+        // --- QUIZ LOGIC ---
+        function startQuiz(quizId) {
+            if(!quizzes[quizId]) {
+                // Mock behavior for the 'Mock Test 1' which isn't defined
+                if(quizId === 'mock-1') {
+                     alert("Full mock test loading... (Simulated)");
+                     return;
+                }
+                return;
+            }
+            
+            currentQuiz = quizzes[quizId];
+            currentQuestionIndex = 0;
+            userAnswers = new Array(currentQuiz.questions.length).fill(null);
+            
+            document.getElementById('quiz-list-container').style.display = 'none';
+            document.getElementById('quiz-interface').style.display = 'block';
+            document.getElementById('quiz-title').innerText = currentQuiz.title;
+            
+            renderQuestion();
+        }
+        
+        function renderQuestion() {
+            const q = currentQuiz.questions[currentQuestionIndex];
+            document.getElementById('question-text').innerText = `${currentQuestionIndex + 1}. ${q.q}`;
+            
+            const optsContainer = document.getElementById('options-container');
+            optsContainer.innerHTML = '';
+            
+            q.options.forEach((opt, idx) => {
+                const div = document.createElement('div');
+                div.className = `quiz-option ${userAnswers[currentQuestionIndex] === idx ? 'selected' : ''}`;
+                div.innerText = opt;
+                div.onclick = () => selectOption(idx);
+                optsContainer.appendChild(div);
+            });
+            
+            // Button states
+            document.getElementById('btn-prev').disabled = currentQuestionIndex === 0;
+            if (currentQuestionIndex === currentQuiz.questions.length - 1) {
+                document.getElementById('btn-next').style.display = 'none';
+                document.getElementById('btn-submit').style.display = 'block';
+            } else {
+                document.getElementById('btn-next').style.display = 'block';
+                document.getElementById('btn-submit').style.display = 'none';
+            }
+        }
+        
+        function selectOption(idx) {
+            userAnswers[currentQuestionIndex] = idx;
+            renderQuestion(); // Re-render to show selection state
+        }
+        
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuiz.questions.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+            }
+        }
+        
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+        
+        function submitQuiz() {
+            let score = 0;
+            currentQuiz.questions.forEach((q, i) => {
+                if(userAnswers[i] === q.ans) score++;
+            });
+            
+            const percentage = Math.round((score / currentQuiz.questions.length) * 100);
+            
+            document.getElementById('quiz-interface').style.display = 'none';
+            document.getElementById('quiz-result').style.display = 'block';
+            document.getElementById('score-display').innerText = `${percentage}%`;
+        }
+        
+        function resetQuizUI() {
+            document.getElementById('quiz-result').style.display = 'none';
+            document.getElementById('quiz-list-container').style.display = 'block';
+            currentQuiz = null;
+        }
+
+        // --- NOTES LOGIC ---
+        function saveNote() {
+            const input = document.getElementById('note-input');
+            const text = input.value.trim();
+            if(!text) return;
+            
+            // Mock timestamp (random between 0:00 and 10:00)
+            const min = Math.floor(Math.random() * 10);
+            const sec = Math.floor(Math.random() * 60).toString().padStart(2, '0');
+            const timestamp = `0${min}:${sec}`;
+            
+            savedNotes.push({ text, timestamp, id: Date.now() });
+            input.value = '';
+            renderNotes();
+            showToast("Note Saved", "Your note has been added.");
+        }
+        
+        function renderNotes() {
+            const container = document.getElementById('notes-list-container');
+            if(savedNotes.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted); font-size:0.9rem;">No notes saved yet.</p>';
+                return;
+            }
+            container.innerHTML = '';
+            savedNotes.forEach(note => {
+                const div = document.createElement('div');
+                div.className = 'note-item';
+                div.innerHTML = `
+                    <div class="note-timestamp"><i class="ph ph-clock"></i> ${note.timestamp}</div>
+                    <div>${note.text}</div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // --- PROGRESS LOGIC ---
+        function markComplete(btn) {
+            const item = btn.closest('.playlist-item');
+            item.classList.toggle('completed');
+            
+            // Toggle Icon
+            const icon = btn.querySelector('i');
+            if(item.classList.contains('completed')) {
+                btn.style.background = 'var(--success)';
+                btn.style.borderColor = 'var(--success)';
+            } else {
+                btn.style.background = 'rgba(255,255,255,0.1)';
+                btn.style.borderColor = 'rgba(255,255,255,0.1)';
+            }
+            
+            calculateProgress();
+        }
+        
+        function calculateProgress() {
+            const total = document.querySelectorAll('.playlist-item').length;
+            const completed = document.querySelectorAll('.playlist-item.completed').length;
+            const percent = Math.round((completed / total) * 100);
+            
+            document.getElementById('progress-bar').style.width = percent + '%';
+            document.getElementById('progress-percent').innerText = percent + '%';
+            
+            if(percent === 100) {
+                showToast("Course Completed", "Congratulations! You've finished this module.");
+            }
+        }
+
+        // --- CART LOGIC ---
+        function addToCart(title, price, author) {
+            const newItem = {
+                id: Date.now(),
+                title: title,
+                price: price,
+                author: author
+            };
+            cartItems.push(newItem);
+            renderCart();
+            updateBadge();
+            showToast('Added to Cart', `"${title}" added to your cart.`);
+        }
+
+        function removeFromCart(id) {
+            cartItems = cartItems.filter(item => item.id !== id);
+            renderCart();
+            updateBadge();
+        }
+
+        // --- WISHLIST LOGIC ---
+        function addToWishlist(title, price, author) {
+            // Check if exists
+            const exists = wishlistItems.some(item => item.title === title);
+            if(exists) {
+                showToast('Wishlist', `"${title}" is already in your wishlist.`);
+                return;
+            }
+
+            const newItem = {
+                id: Date.now(),
+                title: title,
+                price: price,
+                author: author
+            };
+            wishlistItems.push(newItem);
+            renderWishlist();
+            showToast('Saved to Wishlist', `"${title}" saved for later.`);
+        }
+
+        function renderWishlist() {
+            const container = document.getElementById('wishlist-items-container');
+            if(!container) return;
+
+            if (wishlistItems.length === 0) {
+                container.innerHTML = '<p style="color:var(--text-muted);">Saved courses will appear here.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            // We can reuse course-grid style or list style. Let's use course-grid style for better visual
+            const grid = document.createElement('div');
+            grid.className = 'course-grid';
+            
+            wishlistItems.forEach(item => {
+                 // Create a mini card
+                 const card = document.createElement('div');
+                 card.className = 'course-card';
+                 card.innerHTML = `
+                    <div style="padding:15px;">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                             <h4 style="font-size:1rem;">${item.title}</h4>
+                             <button onclick="removeFromWishlist(${item.id})" style="background:none; border:none; color:var(--text-muted); cursor:pointer;"><i class="ph ph-trash"></i></button>
+                        </div>
+                        <div style="color:var(--text-muted); font-size:0.8rem; margin-bottom:10px;">By ${item.author}</div>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <span style="font-weight:bold; color:var(--primary);">${formatCurrency(item.price)}</span>
+                            <button class="btn btn-primary" style="padding:4px 12px; font-size:0.8rem;" onclick="addToCart('${item.title}', ${item.price}, '${item.author}')">Add to Cart</button>
+                        </div>
+                    </div>
+                 `;
+                 grid.appendChild(card);
+            });
+            container.appendChild(grid);
+        }
+
+        function removeFromWishlist(id) {
+            wishlistItems = wishlistItems.filter(item => item.id !== id);
+            renderWishlist();
+        }
+
+        // Helper to format currency
+        function formatCurrency(amount) {
+            return "₹" + amount.toLocaleString('en-IN');
+        }
+
+        function renderCart() {
+            const container = document.getElementById('cart-items-container');
+            const totalDisplay = document.getElementById('cart-total-display');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            
+            if(!container) return; // Guard clause if view not loaded
+
+            container.innerHTML = '';
+            let total = 0;
+
+            if (cartItems.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);">Your cart is empty. <br><a href="#" onclick="showHome()" style="color:var(--primary); cursor:pointer;">Browse Courses</a></div>';
+                checkoutBtn.style.opacity = '0.5';
+                checkoutBtn.style.pointerEvents = 'none';
+                checkoutBtn.innerText = "Cart Empty";
+                totalDisplay.innerText = "Total: ₹0";
+                return;
+            }
+
+            checkoutBtn.style.opacity = '1';
+            checkoutBtn.style.pointerEvents = 'all';
+            checkoutBtn.innerText = "Proceed to Checkout";
+
+            cartItems.forEach(item => {
+                total += item.price;
+                const row = document.createElement('div');
+                row.className = 'list-row';
+                // Add fade-in animation
+                row.style.animation = 'fadeIn 0.3s ease';
+                
+                row.innerHTML = `
+                    <div style="display:flex; gap:15px; align-items:center;">
+                         <div style="width:60px; height:40px; background:#333; border-radius:4px;"></div>
+                         <div>
+                             <div style="font-weight:bold;">${item.title}</div>
+                             <div style="color:var(--text-muted); font-size:0.8rem;">By ${item.author}</div>
+                         </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:20px;">
+                        <div style="font-weight:bold; color:var(--primary);">${formatCurrency(item.price)}</div>
+                        <button onclick="removeFromCart(${item.id})" style="background:none; border:none; color:var(--danger); cursor:pointer; padding:8px; border-radius:50%; transition:background 0.2s;" title="Remove Item">
+                            <i class="ph ph-trash" style="font-size:1.2rem;"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            totalDisplay.innerText = `Total: ${formatCurrency(total)}`;
+        }
+
+        function updateBadge() {
+            const badge = document.getElementById('nav-cart-badge');
+            if (cartItems.length > 0) {
+                badge.style.display = 'inline-block';
+                badge.innerText = cartItems.length;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // --- CHECKOUT LOGIC ---
+        function goToCheckout() {
+            renderCheckout();
+            navigateTo('checkout-view');
+        }
+
+        function renderCheckout() {
+            const list = document.getElementById('checkout-items-list');
+            const subtotalEl = document.getElementById('checkout-subtotal');
+            const taxEl = document.getElementById('checkout-tax');
+            const totalEl = document.getElementById('checkout-final-total');
+            
+            list.innerHTML = '';
+            let subtotal = 0;
+            
+            cartItems.forEach(item => {
+                subtotal += item.price;
+                const div = document.createElement('div');
+                div.style.cssText = "display:flex; justify-content:space-between; margin-bottom:12px; font-size:0.9rem;";
+                div.innerHTML = `
+                    <span style="color:var(--text-muted);">${item.title}</span>
+                    <span>${formatCurrency(item.price)}</span>
+                `;
+                list.appendChild(div);
+            });
+            
+            const tax = subtotal * 0.18;
+            const total = subtotal + tax;
+            
+            subtotalEl.innerText = formatCurrency(subtotal);
+            taxEl.innerText = formatCurrency(tax);
+            totalEl.innerText = formatCurrency(total);
+        }
+        
+        function processPayment() {
+            const btn = document.getElementById('pay-btn');
+            const originalText = btn.innerHTML;
+            
+            // 1. Loading State
+            btn.disabled = true;
+            btn.innerHTML = `<i class="ph ph-spinner ph-spin"></i> Processing...`;
+            btn.style.opacity = '0.7';
+            
+            // 2. Simulate Delay
+            setTimeout(() => {
+                // 3. Success State
+                showToast('Payment Successful', 'Your order has been placed!');
+                
+                // Clear Cart
+                cartItems = [];
+                renderCart();
+                updateBadge();
+                
+                // Redirect to Home after short delay
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                    btn.style.opacity = '1';
+                    showHome();
+                }, 2000);
+                
+            }, 2500);
+        }
+
+        function showToast(title, message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-message').innerText = message;
+            
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+
+        // --- ROUTER / NAVIGATION LOGIC ---
+        function navigateTo(viewId, navElement) {
+            // 1. Hide all views
+            document.querySelectorAll('.view-section').forEach(el => {
+                el.classList.remove('active-view');
+            });
+            
+            // 2. Show target view
+            const target = document.getElementById(viewId);
+            if(target) {
+                target.classList.add('active-view');
+            }
+            
+            // 3. Update Sidebar Active State (if clicked from sidebar)
+            if(navElement) {
+                document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+                navElement.classList.add('active');
+            }
+
+            // 4. Scroll to top
+            window.scrollTo(0,0);
+        }
+
+        // Keep alias for player to maintain compatibility
+        function openPlayer() {
+            navigateTo('player-view');
+        }
+        
+        // Keep alias for home
+        function showHome() {
+            navigateTo('home-view', document.querySelector('.nav-item')); // Assumes first item is Home
+        }
+
+
+        // --- TAB SWITCHER (For Player View) ---
+        function switchTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            // Deactivate all buttons
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            // Activate selected
+            document.getElementById(tabId).classList.add('active');
+            
+            // Activate button logic
+            const btns = document.querySelectorAll('.tab-btn');
+            btns.forEach(btn => {
+                if(btn.getAttribute('onclick').includes(tabId)) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        // --- PROFILE TAB SWITCHER ---
+        function switchProfileTab(tabId) {
+            // Hide all profile contents
+            document.querySelectorAll('.p-tab-view').forEach(el => el.classList.remove('active'));
+            // Deactivate all menu items
+            document.querySelectorAll('.p-menu-item').forEach(el => el.classList.remove('active'));
+            
+            // Activate selected content
+            const target = document.getElementById(tabId);
+            if(target) target.classList.add('active');
+            
+            // Activate button logic
+             const btns = document.querySelectorAll('.p-menu-item');
+            btns.forEach(btn => {
+                if(btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(tabId)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // If switching to wishlist, ensure render is fresh
+            if(tabId === 'p-wishlist') {
+                renderWishlist();
+            }
+        }
+
+
+        // --- HERO SLIDESHOW ---
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        
+        function nextSlide() {
+            if(slides.length === 0) return; 
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        
+        setInterval(nextSlide, 5000);
+
+        // --- VIDEO SWITCHER ---
+        function changeVideo(videoId, element) {
+            const iframe = document.getElementById('main-video');
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            
+            // Update active styling
+            document.querySelectorAll('.playlist-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        // Initialize cart on load
+        window.addEventListener('DOMContentLoaded', initApp);
+
+    </script>
+</body>
+</html>
